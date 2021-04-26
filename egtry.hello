@@ -29,7 +29,10 @@ void starts():
  
 }
 {
- 	AExp()  
+ 	BExp();
+	|
+	AExp();
+ 	  
    <EOF>
 }
 String AExp():
@@ -41,8 +44,9 @@ String c="";
 int value;
 }
 {
-	(
-	   t = <NUM>
+	
+	 (
+	     t = <NUM>
 	  {i = Integer.parseInt(t.image); }
 	  { value =i ;}
 	  (
@@ -63,18 +67,19 @@ int value;
 	  )+
 	    
 	  )*
+	)
 	|
-	 (
+	(
 	   t=<Var>
 	   {c+=t.image ;}
 	   )+
 	  {result=c; } 
-	)
+	
 	{
 	  return result;
 	}
   }
-boolean BExp()
+boolean BExp():
 {
   boolean tt=true;
   boolean ff =false;
@@ -82,17 +87,17 @@ boolean BExp()
   String s2="";
   }
   {
-	(
-	 (
-	    s1=AExp();
+	
+	 
+	   s1=AExp();
 	  <EQUAl>
 	  s2=AExp();
 	  { if(s1.equals(s2)) {
-			return true;
+			return tt;
 	    }else {
-	      return false;
+	      return ff;
 	      }
 	    }
-	  )
-	)
+	  
+	
     }
