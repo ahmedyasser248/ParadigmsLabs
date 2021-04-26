@@ -1,0 +1,98 @@
+
+PARSER_BEGIN(Hello)
+ import java.io.StringReader;
+
+ public class Hello {
+  
+    public static void main(String[] args) throws Exception {
+      Hello hello=new Hello(System.in);
+      Hello.starts();
+    }
+    
+}
+
+PARSER_END(Hello)
+
+
+SKIP: { " " |"\t" |"\n" |"\r" }
+
+TOKEN : { <#Letter: (["a"-"z"]) > }
+TOKEN : { <#Digit: (["0"-"9"]) > }
+TOKEN : { < NUM : (<Digit>)*> }
+TOKEN : { < Var : (<Letter>)*> }
+TOKEN : { <PLUS: "+" > }
+TOKEN : { <MINUS: "-" >}
+TOKEN : { < EQUAL:"==" > }
+
+void starts():
+{
+ 
+}
+{
+ 	AExp()  
+   <EOF>
+}
+String AExp():
+{
+ String result =""; 
+ int  i;
+Token t;
+String c="";
+int value;
+}
+{
+	(
+	   t = <NUM>
+	  {i = Integer.parseInt(t.image); }
+	  { value =i ;}
+	  (
+	    (
+	      <PLUS>
+	      t=<NUM>
+	      {i=Integer.parseInt(t.image); }
+	      {value+=i; }
+	      {result=value+""; }
+	    )+
+	  |
+	  (
+	    <MINUS>
+	     t=<NUM>
+	      {i=Integer.parseInt(t.image); }
+	      {value-=i; }
+	      {result=value+""; } 
+	  )+
+	    
+	  )*
+	|
+	 (
+	   t=<Var>
+	   {c+=t.image ;}
+	   )+
+	  {result=c; } 
+	)
+	{
+	  return result;
+	}
+  }
+boolean BExp()
+{
+  boolean tt=true;
+  boolean ff =false;
+  String s1="";
+  String s2="";
+  }
+  {
+	(
+	 (
+	    s1=AExp();
+	  <EQUAl>
+	  s2=AExp();
+	  { if(s1.equals(s2)) {
+			return true;
+	    }else {
+	      return false;
+	      }
+	    }
+	  )
+	)
+    }
