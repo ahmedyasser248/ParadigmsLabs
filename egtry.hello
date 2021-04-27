@@ -71,6 +71,9 @@ int value;
 	  )+
 	    
 	  )*
+
+
+	  { return result ;}
 	)
 	|
 	(
@@ -83,6 +86,7 @@ int value;
 	  return result;
 	}
   }
+
 boolean BExp():
 {
   boolean tt=true;
@@ -94,7 +98,6 @@ boolean BExp():
 	
 	 
 	    s1=AExp()
-	   
 	  <EQUAL>
 	    s2=AExp() 
 	  { if(s1.equals(s2)) {
@@ -104,5 +107,8 @@ boolean BExp():
 	      }
 	    }
 	  
+	{
+	  return tt;
+	}
 	
     }
