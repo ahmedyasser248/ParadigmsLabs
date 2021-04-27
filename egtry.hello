@@ -1,4 +1,6 @@
-
+options {
+LOOKAHEAD=2;
+  }
 PARSER_BEGIN(Hello)
  import java.io.StringReader;
 
@@ -22,16 +24,17 @@ TOKEN : { < NUM : (<Digit>)*> }
 TOKEN : { < Var : (<Letter>)*> }
 TOKEN : { <PLUS: "+" > }
 TOKEN : { <MINUS: "-" >}
-TOKEN : { < EQUAL:"==" > }
+TOKEN : { <EQUAL:"==" >}
 
 void starts():
 {
  
 }
-{
- 	BExp();
+{	
+ 	AExp()
 	|
-	AExp();
+	BExp()
+	 
  	  
    <EOF>
 }
@@ -56,6 +59,7 @@ int value;
 	      {i=Integer.parseInt(t.image); }
 	      {value+=i; }
 	      {result=value+""; }
+	      {System.out.println(result); }
 	    )+
 	  |
 	  (
@@ -89,9 +93,10 @@ boolean BExp():
   {
 	
 	 
-	   s1=AExp();
-	  <EQUAl>
-	  s2=AExp();
+	    s1=AExp()
+	   
+	  <EQUAL>
+	    s2=AExp() 
 	  { if(s1.equals(s2)) {
 			return tt;
 	    }else {
