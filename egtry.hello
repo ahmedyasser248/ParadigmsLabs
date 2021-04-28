@@ -1,6 +1,4 @@
-options {
-LOOKAHEAD=2;
-  }
+
 PARSER_BEGIN(Hello)
  import java.io.StringReader;
 
@@ -20,26 +18,31 @@ SKIP: { " " |"\t" |"\n" |"\r" }
 
 TOKEN : { <#Letter: (["a"-"z"]) > }
 TOKEN : { <#Digit: (["0"-"9"]) > }
-TOKEN : { < NUM : (<Digit>)*> }
-TOKEN : { < Var : (<Letter>)*> }
+TOKEN : { <NUM: (<Digit>)+> }
+TOKEN : { <Var: (<Letter>)+> }
 TOKEN : { <PLUS: "+" > }
 TOKEN : { <MINUS: "-" >}
 TOKEN : { <EQUAL:"==" >}
-
+TOKEN : {<LEFTBRACE: "(" >}
+TOKEN : {<RIGHTBRACE:")" >}
+TOKEN : {<TRUE: "tt">}
+TOKEN : {<FALSE: "ff" >}
+TOKEN : {<NEGATION:"!" >}
+TOKEN : {<AND:"^" >}
 void starts():
 {
  
 }
-{	
- 	AExp()
-	|
-	BExp()
-	 
+{
+  BExp()
+ 	 
  	  
    <EOF>
 }
-String AExp():
+void AExp():
 {
+  String s1="";
+  String s2="";
  String result =""; 
  int  i;
 Token t;
@@ -47,68 +50,59 @@ String c="";
 int value;
 }
 {
-	
-	 (
-	     t = <NUM>
-	  {i = Integer.parseInt(t.image); }
-	  { value =i ;}
-	  (
-	    (
-	      <PLUS>
-	      t=<NUM>
-	      {i=Integer.parseInt(t.image); }
-	      {value+=i; }
-	      {result=value+""; }
-	      {System.out.println(result); }
-	    )+
+	(
+	  <LEFTBRACE>
+	  AExp()
+	  (  
+	  <PLUS>
 	  |
-	  (
-	    <MINUS>
-	     t=<NUM>
-	      {i=Integer.parseInt(t.image); }
-	      {value-=i; }
-	      {result=value+""; } 
-	  )+
-	    
-	  )*
-
-
-	  { return result ;}
+	  <MINUS> 
+	  )
+	  AExp()
+	  <RIGHTBRACE>
 	)
 	|
 	(
-	   t=<Var>
-	   {c+=t.image ;}
-	   )+
-	  {result=c; } 
+	  <NUM>
+	)
+	|
+	(
+	  <Var>
+	)  
 	
-	{
-	  return result;
-	}
   }
 
-boolean BExp():
+void BExp():
+{}
 {
-  boolean tt=true;
-  boolean ff =false;
-  String s1="";
-  String s2="";
+	(
+	  <LEFTBRACE>
+	  (
+	  (
+	   BExp()
+	  <AND>
+	  BExp())
+		|
+		(
+		 AExp()
+		 <EQUAL>
+		 AExp() 
+		) 
+	  )
+	  <RIGHTBRACE>
+	)
+	|
+	(
+	  <FALSE>
+	)
+	
+	|
+	(
+	  <NEGATION>
+	  BExp()
+	)
+	|
+	(
+	  <TRUE>
+	 )
   }
-  {
-	
-	 
-	    s1=AExp()
-	  <EQUAL>
-	    s2=AExp() 
-	  { if(s1.equals(s2)) {
-			return tt;
-	    }else {
-	      return ff;
-	      }
-	    }
-	  
-	{
-	  return tt;
-	}
-	
-    }
