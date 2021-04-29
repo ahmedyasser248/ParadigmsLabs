@@ -1,9 +1,9 @@
 
 PARSER_BEGIN(Hello)
  import java.io.StringReader;
-
+import java.util.HashMap;
  public class Hello {
-  
+	static public final HashMap<String,Integer >hashmap = new HashMap();
     public static void main(String[] args) throws Exception {
       Hello hello=new Hello(System.in);
       Hello.starts();
@@ -31,78 +31,121 @@ TOKEN : {<NEGATION:"!" >}
 TOKEN : {<AND:"^" >}
 void starts():
 {
- 
+ int result;
 }
 {
-  BExp()
- 	 
+  result=AExp()
+ 	{
+ 	  System.out.println(result);
+ 	} 
  	  
    <EOF>
 }
-void AExp():
+int AExp():
 {
-  String s1="";
-  String s2="";
- String result =""; 
- int  i;
+String temp=""; 
+int  num1;
+boolean add=true;
+int num2;
 Token t;
-String c="";
 int value;
 }
 {
 	(
-	  <LEFTBRACE>
-	  AExp()
+	  (
+	    <LEFTBRACE>
+	  num1= AExp()
 	  (  
 	  <PLUS>
 	  |
-	  <MINUS> 
+	  (
+	    
+	  <MINUS>
+	  {add=false; }
 	  )
-	  AExp()
+	  )
+	 num2 = AExp()
 	  <RIGHTBRACE>
+	  )
+	  {if(add) {
+	    return num1+num2;
+	    }else {
+			return num1-num2;
+	      }
+
+	    }
+	  
 	)
 	|
 	(
-	  <NUM>
+	  t=<NUM>
+	  { return Integer.parseInt(t.image);}
 	)
 	|
 	(
-	  <Var>
+	  t=<Var>
+	  {temp=t.image; }
+	  {if(hashmap.containsKey(temp)) {
+			return hashmap.get(temp);
+
+	    }else {
+			return -1;
+	      } }
 	)  
 	
   }
 
-void BExp():
-{}
+boolean BExp():
+{boolean result1;
+boolean result2;
+int a1,a2;
+}
 {
 	(
 	  <LEFTBRACE>
 	  (
 	  (
-	   BExp()
+	  result1= BExp()
 	  <AND>
-	  BExp())
+	  result2= BExp()
+	  <RIGHTBRACE>
+	  )
+	  { return result1&&result2;}
 		|
 		(
-		 AExp()
-		 <EQUAL>
-		 AExp() 
+		a1 = AExp()
+		  <EQUAL>
+		a2 = AExp()
+		<RIGHTBRACE>
+		{
+		  if(a1==a2) {
+		    return true;
+		    }else {
+		      return false;
+		     }
+		} 
 		) 
 	  )
-	  <RIGHTBRACE>
+	  
 	)
 	|
 	(
 	  <FALSE>
+	  {return false; }
 	)
 	
 	|
 	(
 	  <NEGATION>
-	  BExp()
+	 result1= BExp()
+	
+	 {
+	   return !result1;
+	 }
 	)
 	|
 	(
 	  <TRUE>
+	  {return true; }
 	 )
   }
